@@ -1,106 +1,59 @@
-
-# github page for original stepper motor library
-# https://github.com/arduino-libraries/Stepper/blob/master/src/Stepper.cpp
-# have to import pyfirmata in the code that you are calling this class in
+'''
+Python code to control a stepper motor using the A4988 driver.
+'''
 from time import sleep
 
 class Stepper():
-    #for a 4 control wire stepper
-    #total steps is the total number of steps per revolution, which is 2038
-    def __init__(self, total_steps, board, reader, pin_1, pin_2, pin_3, pin_4):
+    def __init__(self, total_steps, board, dir_pin, step_pin, micro_step_pins=(0,0,0)):
 
-        #sets up the thing so it will mesh with the arduino
-        #initializes the pins as outputs
-        self.pin_1 = board.get_pin('d:%s:o' % (pin_1))
-        self.pin_2 = board.get_pin('d:%s:o' % (pin_2))
-        self.pin_3 = board.get_pin('d:%s:o' % (pin_3))
-        self.pin_4 = board.get_pin('d:%s:o' % (pin_4))
-        #led for testing
+        # initializes the pins as outputs
+        self.dir_pin = board.get_pin(f'd:{dir_pin}:o')
+        self.step_pin = board.get_pin(f'd:{step_pin}:o')
+        self.micro_step_pins = [
+            board.get_pin(f'd:{micro_step_pins[0]}:o'),
+            board.get_pin(f'd:{micro_step_pins[1]}:o'),
+            board.get_pin(f'd:{micro_step_pins[2]}:o'),
+        ]
 
-        #led = board.get_pin('d:12:o')
-        #led.write(1)
-
-        self.step_number = 0 #what number of steps are going to be turned
+        self.step_number = 0 # what number of steps are going to be turned
         self.direction = 0
-        self.total_steps = total_steps #total number of steps per revolution
-        self.step_delay = 0 #time delay between steps
+        self.total_steps = total_steps # total number of steps per revolution
+        self.step_delay = 0 # time delay between steps
 
-    def set_speed(self, what_speed):
-        #sets the speed. number is arbitrary but the smaller the delay the faster it runs
-        self.step_delay = (self.total_steps / (1000000* what_speed))
-        #print(self.step_delay)
+    def switch_direction(self):
+        self.direction = 1 if self.direction == 0 else 0
+    
+    def turn_angle(self, degrees):
+        if degrees < 0:
+            self.switch_direction()
+            degrees = -degrees
+            
+        steps_to_move = (degrees*self.total_steps)/360
 
-    def step(self, steps_to_move):
-        #sets forward and backward
-        if steps_to_move > 0:
-            self.direction = 1
-        if steps_to_move < 0:
-            self.direction = 0
+        self.set_resolution(0)
+        self.move(steps_to_move//1)
 
-        # sets the number of steps that still need to be turned
-        steps_left = abs(steps_to_move)
+        # steps = a/2^0 + b/2^1 + ... + c/2^4        
 
-        #while this still needs to be turned, it starts with a delay and then depending on
-        #the direction, steps in one direction and then also has a reset for when the
-        #step number hits the max or min limits
-        while steps_left > 0:
-            sleep(self.step_delay)
-            if self.direction == 1:
-                self.step_number += 1
-                if self.step_number == self.total_steps:
-                    self.step_number = 0
-            else:
-                if self.direction == 0:
-                    self.step_number -= 1
-                    if self.step_number == 0:
-                        self.step_number = self.total_steps
+    def move(self, steps):
+        for i in range(steps):
+            self.step_pin.write(1)
+        self.step_pin.write(0)
 
-                    #print(str(self.step_number))
+    def set_resolution(self, resolution):
+        '''
+        Defined resolutions: 1, 1/2, 1/4, 1/8, 1/16 indexed from [0, 4]
+        '''
+        if resolution == 0: # full step
+            states = (0, 0, 0)
+        elif resolution == 1: # half step
+            states = (1, 0, 0)
+        elif resolution == 2: # quarter step
+            states = (0, 1, 0)    
+        elif resolution == 3: # 1/8th step
+            states = (1, 1, 0)
+        elif resolution == 4: # 1/16th step
+            states = (1, 1, 1)
 
-            steps_left -= 1
-            #calls method to actually turn it
-            self.step_motor(self.step_number % 8)
-
-    def step_motor(self, this_step):
-        #the binary numbers turn it. not sure why, pulled numbers from the github
-        #use half steps so that it can turn backwards
-        if this_step == 0:
-            self.pin_1.write(1)
-            self.pin_2.write(0)
-            self.pin_3.write(0)
-            self.pin_4.write(0)
-        elif this_step == 1:
-            self.pin_1.write(1)
-            self.pin_2.write(1)
-            self.pin_3.write(0)
-            self.pin_4.write(0)
-        elif this_step == 2:
-            self.pin_1.write(0)
-            self.pin_2.write(1)
-            self.pin_3.write(0)
-            self.pin_4.write(0)
-        elif this_step == 3:
-            self.pin_1.write(0)
-            self.pin_2.write(1)
-            self.pin_3.write(1)
-            self.pin_4.write(0)
-        elif this_step == 4:
-            self.pin_1.write(0)
-            self.pin_2.write(0)
-            self.pin_3.write(1)
-            self.pin_4.write(0)
-        elif this_step == 5:
-            self.pin_1.write(0)
-            self.pin_2.write(0)
-            self.pin_3.write(1)
-            self.pin_4.write(1)
-        elif this_step == 6:
-            self.pin_1.write(0)
-            self.pin_2.write(0)
-            self.pin_3.write(0)
-            self.pin_4.write(1)
-        elif this_step == 7:
-            self.pin_1.write(1)
-            self.pin_2.write(0)
-            self.pin_3.write(0)
-            self.pin_4.write(1)
+        for pin, state in zip(self.micro_step_pins, states):
+            pin.write(states)

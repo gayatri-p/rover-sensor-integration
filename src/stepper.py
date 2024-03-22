@@ -1,4 +1,3 @@
-
 # github page for original stepper motor library
 #https://github.com/arduino-libraries/Stepper/blob/master/src/Stepper.cpp
 # have to import pyfirmata in the code that you are calling this class in
