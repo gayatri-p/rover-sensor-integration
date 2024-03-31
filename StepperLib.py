@@ -1,5 +1,5 @@
 '''
-Python code to control a stepper motor using the A4988 driver.
+Controlling a stepper motor using the A4988 driver.
 '''
 from time import sleep
 
@@ -31,14 +31,23 @@ class Stepper():
         steps_to_move = (degrees*self.total_steps)/360
 
         self.set_resolution(0)
-        self.move(steps_to_move//1)
+        self.step(steps_to_move//1.8)
+        steps_to_move -= steps_to_move//1.8
+        
+        self.set_resolution(1)
+        self.step(steps_to_move//1.8)
 
         # steps = a/2^0 + b/2^1 + ... + c/2^4        
 
-    def move(self, steps):
+    def step(self, steps):
         for i in range(steps):
             self.step_pin.write(1)
-        self.step_pin.write(0)
+            sleep(self.step_delay)
+            self.step_pin.write(0)
+            sleep(self.step_delay)
+            
+            print(i)
+        # self.step_pin.write(0)
 
     def set_resolution(self, resolution):
         '''
@@ -56,4 +65,4 @@ class Stepper():
             states = (1, 1, 1)
 
         for pin, state in zip(self.micro_step_pins, states):
-            pin.write(states)
+            pin.write(state)
