@@ -19,6 +19,17 @@ while True:
     # motor.switch_direction()
     sleep(0.01)
     motor.turn_angle(-60)
+
+    steps_to_move = round((30*steps_per_revolution)/360,4)
+    print(steps_to_move)
+    print('full steps', steps_to_move//1.8)
+    steps_to_move = round(steps_to_move%1.8,4)
+    print('remaining steps', steps_to_move)
+    print()
+    
+    print('half steps', steps_to_move//0.9)
+    steps_to_move = round(steps_to_move%0.9,4)
+    print('remaining steps', steps_to_move)
     
     board.exit()
     break
