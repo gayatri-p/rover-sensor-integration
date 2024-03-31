@@ -29,15 +29,18 @@ class Stepper():
             degrees = -degrees
             
         steps_to_move = (degrees*self.total_steps)/360
+        step_sizes = [360/(200*2**x) for x in range(0,5)] # in degrees
 
-        self.set_resolution(0)
-        self.step(steps_to_move//1.8)
-        steps_to_move -= steps_to_move//1.8
-        
-        self.set_resolution(1)
-        self.step(steps_to_move//1.8)
+        for i, step_size in enumerate(step_sizes):
+            self.set_resolution(i)
+            self.step(steps_to_move//step_size)
 
-        # steps = a/2^0 + b/2^1 + ... + c/2^4        
+            print(f'1/{2**(i)} steps: {steps_to_move//step_size}')
+            steps_to_move = round(steps_to_move%step_size, 4)
+            print('remaining steps', steps_to_move)
+            print()
+
+        print('remaining angle:', steps_to_move*1.8)
 
     def step(self, steps):
         for i in range(steps):
