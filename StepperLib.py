@@ -1,5 +1,14 @@
 '''
-Controlling a stepper motor using the A4988 driver.
+Stepper motor control using the A4988 driver.
+Pinout:
+1 - ENABLE         16 - V_MOTOR
+2 - MICROSTEP 1    15 - GND_MOTOR
+3 - MICROSTEP 2    14 - 2B
+4 - MICROSTEP 3    13 - 2A
+6 - RESET          12 - 1A
+6 - SLEEP          11 - 1B
+7 - STEP           10 - V_DD
+8 - DIRECTION      9  - GND
 '''
 from time import sleep
 
