@@ -21,5 +21,4 @@ class servo:
         scale.pack(anchor = CENTER)
     
         root.mainloop()
-    
-    main()
+
