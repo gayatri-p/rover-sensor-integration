@@ -1,35 +1,41 @@
 from time import sleep
-import pyfirmata
+import numpy as np
+import pyfirmata2 as pyfirmata
 from StepperLib import Stepper
 
-board = pyfirmata.ArduinoMega('COM19')
+board = pyfirmata.Arduino(pyfirmata.Arduino.AUTODETECT)
 reader = pyfirmata.util.Iterator(board) # reads inputs of the circuit
 reader.start()
 print("Communication Successfully started")
 
-dir_pin = 22
-step_pin = 23
+dir_pin = 2
+step_pin = 3
 steps_per_revolution = 200
 
-motor = Stepper(steps_per_revolution, board, dir_pin, step_pin)
+motor = Stepper(steps_per_revolution, board, dir_pin, step_pin, micro_step_pins=(8, 9, 10))
 
 while True:
     
+    motor.turn_angle(120)
+    sleep(1)
+    motor.switch_direction()
     motor.turn_angle(60)
-    # motor.switch_direction()
-    sleep(0.01)
-    motor.turn_angle(-60)
 
-    steps_to_move = round((30*steps_per_revolution)/360,4)
-    print(steps_to_move)
-    print('full steps', steps_to_move//1.8)
-    steps_to_move = round(steps_to_move%1.8,4)
-    print('remaining steps', steps_to_move)
-    print()
-    
-    print('half steps', steps_to_move//0.9)
-    steps_to_move = round(steps_to_move%0.9,4)
-    print('remaining steps', steps_to_move)
+    ''' test resolutions '''
+    # motor.set_resolution(0)
+    # motor.step(200)
+    # sleep(2)
+    # motor.set_resolution(1)
+    # motor.step(400)
+    # sleep(2)
+    # motor.set_resolution(2)
+    # motor.step(800)
+    # sleep(2)
+    # motor.set_resolution(3)
+    # motor.step(1600)
+    # sleep(2)
+    # motor.set_resolution(4)
+    # motor.step(3200)
     
     board.exit()
     break
