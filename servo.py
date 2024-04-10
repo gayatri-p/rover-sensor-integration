@@ -1,26 +1,13 @@
 """ servo pyfirmata"""
 
 import pyfirmata
-from tkinter import *
 
 class servo:
-    def move_servo(angle):
-        pin9.write(angle)
+    def __init__(self,pin):
+        self.pin=board.get_pin(f'd:{}:s'.{pin})
         
-    def main():
-        global pin9
+    def move_servo(self,angle):
+       self.pin.write(angle)
         
-        board=pyfirmata.Arduino('COM5')
-    
-        iter8 = pyfirmata.util.Iterator(board)
-        iter8.start()
-    
-        pin9 = board.get_pin('d:9:s')
-        
-        root = Tk()
-        scale = Scale(root, command = move_servo, to = 175, 
-                      orient = HORIZONTAL, length = 400, label = 'Angle')
-        scale.pack(anchor = CENTER)
-    
-        root.mainloop()
+
 
