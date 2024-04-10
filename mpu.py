@@ -14,6 +14,7 @@ class MPU:
             Acceleration=("Acceleration: X:%.2f, Y: %.2f, Z: %.2f m/s^2" % (self.mpu.acceleration))
             Gyro=("Gyro X:%.2f, Y: %.2f, Z: %.2f rad/s" % (self.mpu.gyro))
             Temperature=("Temperature: %.2f C" % self.mpu.temperature)
+            return Acceleration,Gyro,Temperature
             time.sleep(1)
 
 if __name__ == "__main__":
