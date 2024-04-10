@@ -18,39 +18,35 @@ class Stepper():
         self.step_number = 0 # what number of steps are going to be turned
         self.direction = 0
         self.total_steps = total_steps # total number of steps per revolution
-        self.step_delay = 0 # time delay between steps
+        self.step_delay = 0.001 # time delay between steps
 
     def switch_direction(self):
         self.direction = 1 if self.direction == 0 else 0
+        self.dir_pin.write(self.direction)
     
-    def turn_angle(self, degrees):
-        if degrees < 0:
+    def turn_angle(self, angle):
+        if angle < 0:
             self.switch_direction()
-            degrees = -degrees
-            
-        steps_to_move = (degrees*self.total_steps)/360
+            angle = -angle
+
         step_sizes = [360/(200*2**x) for x in range(0,5)] # in degrees
 
         for i, step_size in enumerate(step_sizes):
             self.set_resolution(i)
-            self.step(steps_to_move//step_size)
+            self.step(angle//step_size)
 
-            print(f'1/{2**(i)} steps: {steps_to_move//step_size}')
-            steps_to_move = round(steps_to_move%step_size, 4)
-            print('remaining steps', steps_to_move)
-            print()
+            print(f'1/{2**(i)} steps: {angle//step_size}')
+            angle = angle - (angle//step_size)*step_size
+            # print('remaining steps', angle/1.8)
 
-        print('remaining angle:', steps_to_move*1.8)
+        print('remaining angle (error):', angle)
 
     def step(self, steps):
-        for i in range(steps):
+        for i in range(int(steps)):
             self.step_pin.write(1)
             sleep(self.step_delay)
             self.step_pin.write(0)
             sleep(self.step_delay)
-            
-            print(i)
-        # self.step_pin.write(0)
 
     def set_resolution(self, resolution):
         '''
