@@ -1,7 +1,9 @@
 """ servo pyfirmata"""
+
+import pyfirmata
+from tkinter import *
+
 class servo:
-    import pyfirmata
-    from tkinter import *
     def move_servo(angle):
         pin9.write(angle)
         
