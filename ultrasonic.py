@@ -1,4 +1,4 @@
-rom pyfirmata import Arduino, util
+from pyfirmata import Arduino, util
 import time
 board = Arduino('/dev/ttyACM0')  # Change '/dev/ttyACM0' to the port where your Arduino is connected
 class ultrasonic:
