@@ -29,6 +29,9 @@ class Stepper():
         self.total_steps = total_steps # total number of steps per revolution
         self.step_delay = 0.001 # time delay between steps
 
+    def set_delay(self, delay):
+        self.step_delay = delay
+
     def switch_direction(self):
         self.direction = 1 if self.direction == 0 else 0
         self.dir_pin.write(self.direction)
