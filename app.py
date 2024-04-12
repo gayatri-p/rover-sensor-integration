@@ -11,7 +11,7 @@ def index():
     # if request.method == "GET":
     base = request.form.get("base-angle")
     hinge1 = request.form.get("hinge1-angle")
-    hinge = request.form.get("hinge2-angle")
+    hinge2 = request.form.get("hinge2-angle")
     hinge3 = request.form.get("hinge3-angle")
     print('base:', base)
     print('hinge1:', hinge1)

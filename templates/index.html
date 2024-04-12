@@ -53,7 +53,19 @@
             </ol>
         </section>
 
-        
+        <button class="btn btn-primary" button type="submit" name="button" value="button-play">PLAY</button>
+
+          <button class="btn btn-primary" button type="submit" name="button" value="button-exit">EXIT</button>
+
+          <input id="slide" type="range" min="1" max="100" step="1" value="10" name="slide">
+          <input id="slide2" type="range" min="1" max="100" step="1" value="10" name="slide2">
+          <div id="sliderAmount"></div>
+          <div id="sliderAmount2"></div>
+
+          <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+          <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+            integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+            crossorigin="anonymous"></script>
         <script>
             let sliders = ['base', 'hinge1', 'hinge2', 'hinge3']
             let sliderOutputs = ['base-output', 'hinge1-output', 'hinge2-output', 'hinge3-output']
@@ -62,14 +74,29 @@
                 var slider = document.getElementById(slider_val.concat('-slider'));
                 var numInp = document.getElementById(slider_val.concat('-angle-n'));
                 var output = document.getElementById(slider_val.concat('-output'));
-                slider.oninput = function() {
+
+                slider.onchange = function () {
                     output.innerHTML = this.value;
-                    numInp.value = this.value
-                }
-                numInp.oninput = function() {
-                    output.innerHTML = this.value;
-                    slider.value = this.value
-                }
+                    $.post({
+                      url: '/',
+                      data: $('form').serialize(),
+                      success: function (response) {
+                      },
+                      error: function (error) {
+                        alert(response);
+                      }
+                    });
+                  }
+                
+
+                // slider.oninput = function() {
+                //     output.innerHTML = this.value;
+                //     numInp.value = this.value
+                // }
+                // numInp.oninput = function() {
+                //     output.innerHTML = this.value;
+                //     slider.value = this.value
+                // }
             });
 
             function submitForm() {
