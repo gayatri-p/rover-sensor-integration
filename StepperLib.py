@@ -13,7 +13,7 @@ Pinout:
 from time import sleep
 
 class Stepper():
-    def __init__(self, total_steps, board, dir_pin, step_pin, micro_step_pins=(0,0,0)):
+    def __init__(self, board, dir_pin, step_pin, micro_step_pins=(0,0,0), total_steps=200):
 
         # initializes the pins as outputs
         self.dir_pin = board.get_pin(f'd:{dir_pin}:o')

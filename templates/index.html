@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Rover Interface</title>
+    </head>
+    <body>
+
+        <section>
+            <h1>Stepper Motor Controls</h1>
+            <ol>
+                <form name="stepepr-controls" action="{{ url_for('index') }}" method="post">
+                    <li>
+
+                        <label for="base">Base Motor</label>
+                        <input type="range" name="base-angle" min="0" value="0" max="360" id="base-slider">
+                        <input type="number" name="base-angle-n" min="0" value="0" max="360" id="base-angle-n">
+                        <span id="base-output">0</span>
+
+                    </li>
+
+                    <li>
+
+                        <label for="hinge1">Hinge 1 Motor</label>
+                        <input type="range" name="hinge1-angle" value="0" min="0" max="360" id="hinge1-slider">
+                        <input type="number" name="hinge1-angle-n" min="0" value="0" max="360" id="hinge1-angle-n">
+                        <span id="hinge1-output">0</span>
+
+                    </li>
+
+                    <li>
+
+                        <label for="hinge2">Hinge 2 Motor</label>
+                        <input type="range" name="hinge2-angle" value="0" min="0" max="360" id="hinge2-slider">
+                        <input type="number" name="hinge2-angle-n" min="0" value="0" max="360" id="hinge2-angle-n">
+                        <span id="hinge2-output">0</span>
+
+                    </li>
+
+                    <li>
+
+                        <label for="hinge3">Hinge 3 Motor</label>
+                        <input type="range" name="hinge3-angle" value="0" min="0" max="360" id="hinge3-slider">
+                        <input type="number" name="hinge3-angle-n" min="0" value="0" max="360" id="hinge3-angle-n">
+                        <span id="hinge3-output">0</span>
+
+                    </li>
+
+                    <input type="submit" value="Submit">
+                    <input type="button" value="Submit" id="btnsubmit" onclick="submitForm()">
+                </form>
+            </ol>
+        </section>
+
+        
+        <script>
+            let sliders = ['base', 'hinge1', 'hinge2', 'hinge3']
+            let sliderOutputs = ['base-output', 'hinge1-output', 'hinge2-output', 'hinge3-output']
+            
+            sliders.forEach(slider_val => {
+                var slider = document.getElementById(slider_val.concat('-slider'));
+                var numInp = document.getElementById(slider_val.concat('-angle-n'));
+                var output = document.getElementById(slider_val.concat('-output'));
+                slider.oninput = function() {
+                    output.innerHTML = this.value;
+                    numInp.value = this.value
+                }
+                numInp.oninput = function() {
+                    output.innerHTML = this.value;
+                    slider.value = this.value
+                }
+            });
+
+            function submitForm() {
+                // Get the first form with the name
+                // Usually the form name is not repeated
+                // but duplicate names are possible in HTML
+                // Therefore to work around the issue, enforce the correct index
+                var frm = document.getElementsByName('stepepr-controls')[0];
+                frm.submit(); // Submit the form
+                return false; // Prevent page refresh
+                }
+            // for (var i=0; i<=3; i++) {
+
+            //     var slider = document.getElementById(sliders[i]);
+            //     var output = document.getElementById(sliderOutputs[i]);
+            //     output.innerHTML = slider.value;
+    
+            //     slider.oninput = function() {
+            //         output.innerHTML = this.value;
+            //     }
+            // }
+        </script>
+
+    </body>
+</html>
