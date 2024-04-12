@@ -10,7 +10,7 @@ l1 = 35
 l2 = 30
 l3 = 15
 
-x = np.random.randint(0, 60) 
+x = np.random.randint(0, 60) # l1+l2 < x < l1+l2+l3
 y = np.random.randint(0, 60) 
 z = 40
 
