@@ -1,13 +1,23 @@
 """ servo pyfirmata"""
+from time import sleep
 
-import pyfirmata
-
-class servo:
-    def __init__(self,pin):
-        self.pin=board.get_pin(f'd:{}:s'.{pin})#board will be initialized beforehand
+class Servo:
+    def __init__(self, board, pin):
+        self.pin = pin
+        self.servo = board.get_pin(f'd:{pin}:s')
+        self.steps = 30
+        self.delay = 25/(1000*self.steps)
         
-    def move_servo(self,angle):
-        self.pin.write(angle)
+    def turn_angle(self, angle):
+        start = self.servo.read()
+        if start < angle:
+            for i in range(self.steps*start, self.steps*angle+1):
+                self.servo.write(i/self.steps)
+                sleep(self.delay)
+        else:
+            for i in range(self.steps*start, self.steps*angle-1, -1):
+                self.servo.write(i/self.steps)
+                sleep(self.delay)
         
 
 

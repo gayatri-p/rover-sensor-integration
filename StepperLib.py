@@ -104,9 +104,9 @@ class Stepper_ULN2003():
             for pin in range(len(self.pins)):
                 self.pins[pin].write(self.step_sequence[cnt][pin])
             
-            if direction:
+            if direction: # clockwise
                 cnt = (cnt + 1) % 8
-            else:
+            else: # counter-clockwise
                 cnt = (cnt - 1) % 8
             
             sleep(self.step_sleep)
