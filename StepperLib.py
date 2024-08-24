@@ -77,3 +77,36 @@ class Stepper():
 
         for pin, state in zip(self.micro_step_pins, states):
             pin.write(state)
+
+class Stepper_ULN2003():
+    def __init__(self, board, pins=(8, 9, 10, 11)):
+        self.board = board
+        self.pin1, self.pin2, self.pin3, self.pin4 = pins
+        self.in1 = board.get_pin(f'd:{self.pin1}:o')
+        self.in2 = board.get_pin(f'd:{self.pin2}:o')
+        self.in3 = board.get_pin(f'd:{self.pin3}:o')
+        self.in4 = board.get_pin(f'd:{self.pin4}:o')
+        self.pins = [self.in1, self.in2, self.in3, self.in4]
+        self.steps = 4096
+        self.step_sleep = 0.000025
+        self.step_sequence = [[1,0,0,1],
+                              [1,0,0,0],
+                              [1,1,0,0],
+                              [0,1,0,0],                                                                    
+                              [0,1,1,0],
+                              [0,0,1,0],
+                              [0,0,1,1],
+                              [0,0,0,1]]
+        
+    def rotate(self, num_rotations, direction):
+        cnt = 0
+        for i in range(num_rotations*self.steps):
+            for pin in range(len(self.pins)):
+                self.pins[pin].write(self.step_sequence[cnt][pin])
+            
+            if direction:
+                cnt = (cnt + 1) % 8
+            else:
+                cnt = (cnt - 1) % 8
+            
+            sleep(self.step_sleep)
